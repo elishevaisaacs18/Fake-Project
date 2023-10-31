@@ -76,8 +76,8 @@ class DB {
         let user = new User(username, password);
         this.users.push(user);
         localStorage.setItem("Users", JSON.stringify(this.users));
-
     }
+
     addShoppingItem(name) {
         let item = new ShoppingItem(name);
         this.shoppingItems.push(item);
@@ -87,5 +87,22 @@ class DB {
     getFilterdArrayByAttribure(arr, attribute, value) {
         arr.filter((element) => element[attribute] === value);
     }
+}
 
+class Server{
+    constructor() {
+        this.state = 0;
+    }
+
+    sendRequestToDb(request) {
+        // regex for get users       /^GET\s\/[A-Za-z]/$/
+        // regex for get users/1, get shoppingItem/1      /^GET\s\/[A-Za-z]/\/\d+$/
+        // regex for DELETE users/0, DELETE shoppingItem/1      /^DELETE\s\/[A-Za-z]/\/\d+$/
+        // regex for get users/userName/elisheva         /^GET (\w+\/){2}\w+$/
+        // regex for POST users username elisheva       /^POST(\s[A-Za-z]+){3}$/
+    }
+
+    //validation unams pass
+    //url to a db function
+    //return value to client
 }
