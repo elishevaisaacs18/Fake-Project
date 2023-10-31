@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
-    <div id="sighup">
+    <div id="div-hold"></div>
+    <template id='log-in-template'>
+        <h1>The Greatest Counter "Game" Ever Created</h1>
         <form>
-            <label for="username">Username</label><br>
-            <input type="text" name="username" id="username"><br>
+            <label for="user-name">Username</label><br>
+            <input type="text" name="user-name" id="user-name"><br>
             <label for="password">Password</label><br>
             <input type="password" name="password" id="password"><br>
-            <button type="submit">Submit</button><br>
+            <button id="log-in-btn" type="submit">Submit</button><br>
         </form>
-    </div>
-
+    </template>
+    <template id="shoping-list-template">
+        <div id="counter">CLICK HERE!!!</div>
+        <div id="count-display">count: 0</div>
+    </template>
     <script src="../js/login.js"></script>
 </body>
+
 </html>
