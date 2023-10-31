@@ -14,8 +14,8 @@ class User {
     }
 }
 
-let json = JSON.stringify(user);
-localStorage.setItem(json);
+// let json = JSON.stringify(user);
+// localStorage.setItem(json);
 
 let currPage;
 document.addEventListener('DOMContentLoaded', () => {
