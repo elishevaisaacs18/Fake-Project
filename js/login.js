@@ -70,7 +70,7 @@ class User {
         this.password = password;
         this.shoppingList = new ShoppingList();
         this.id = db.getArrayOf("Users").length - 1;
-        this.connected = true;/////////////////////////////////////////////////////////////
+        this.connected = false;
     }
 }
 
