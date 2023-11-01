@@ -22,6 +22,22 @@ class ShoppingItem {
         this.deleted = false;
     }
 }
+function addItemPrompt() {
+    let item = prompt("Which item would you like to add ?");
+    if (item !== "") {
+        let listItem = document.createElement("li");
+        listItem.textContent = item;
+        // listItem.id=listItem;
+        let parentElement = document.getElementById("ul-list");
+        parentElement.appendChild(listItem);
+        let icon = document.createElement("img");
+        icon.src = "../img/remove-item.png";
+        icon.id = "remove - item";
+        parentElement.appendChild(icon);
+        icon.addEventListener('click', console.log("faja"));
+    }
+
+}
 // function validPassword(password){
 //  let passwordCheck=/^(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
 //     if(password.test(passwordCheck)){
@@ -51,6 +67,8 @@ function listenToActions() {
         // document.getElementById("sign-up-btn").addEventListener('click', () => {
         //     changePage('sign-in-template');
         // });
+        let addItemIcon = document.getElementById("add-item").addEventListener("click", addItemPrompt)
+
     }
 }
 
@@ -101,11 +119,6 @@ class DB {
         this.getArrayOf(arr).filter((element) => element[attribute] === value);
     }
 }
-
-localStorage.setItem("ShoppingItems", JSON.stringify(["milk", "cheese"]));
-localStorage.setItem("Users", JSON.stringify(["eli", "shir"]));
-const db = new DB();
-
 
 class Server {
     constructor() {
