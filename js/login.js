@@ -1,5 +1,4 @@
-
-
+localStorage.setItem("Users", JSON.stringify([{ name: "eli", password: "eli", id: 0, connected: true }]));
 
 function login(event) {
     event.preventDefault();
@@ -10,18 +9,27 @@ class User {
     constructor(username, password) {
         this.username = username;
         this.password = password;
-        this.id = db.getArrayOf("Users").length;
-        this.connected = false;
+        this.shoppingList = new ShoppingList();
+        this.id = db.getArrayOf("Users").length - 1;
+        this.connected = true;
     }
 }
+
+class ShoppingList {
+    constructor() {
+        this.items = [];
+        this.userId = getCurrUser().id;
+    }
+}
+
 
 class ShoppingItem {
     constructor(name) {
         this.name = name;
-        this.id = db.getArrayOf("ShoppingItems").length;
         this.deleted = false;
     }
 }
+
 function addItemPrompt() {
     let item = prompt("Which item would you like to add ?");
     if (item !== "") {
@@ -84,7 +92,6 @@ function changePage(newPageTemplateId) {
 class DB {
     constructor() {
         this.users = [];
-        this.shoppingItems = [];
     }
 
 
@@ -100,23 +107,30 @@ class DB {
         const ARR = this.getArrayOf(objType);
         ARR[id] = {};
         localStorage.setItem(objType, JSON.stringify(ARR));
+        return "success";
     }
 
     addUser(username, password) {
         let user = new User(username, password);
         this.users.push(user);
-        console.log('usersssssss', this.users)
         localStorage.setItem("Users", JSON.stringify(this.users));
+        return "success";
     }
 
     addShoppingItem(name) {
         let item = new ShoppingItem(name);
-        this.shoppingItems.push(item);
-        localStorage.setItem("ShoppingItems", JSON.stringify(this.shoppingItems));
+        const user = getCurrUser();
+        const shoppingArr = Array.from(user.shoppingList);
+        shoppingArr.push(item);
+        user.shoppingList = shoppingArr;
+        this.users[getCurrUser().id] = user;
+        localStorage.setItem("Users", JSON.stringify(this.users));
+        console.log('getCurrUser().shoppingList): ', getCurrUser().shoppingList)
+        return "success";
     }
 
     getFilterdArrayByAttribure(arr, attribute, value) {
-        this.getArrayOf(arr).filter((element) => element[attribute] === value);
+        return this.getArrayOf(arr).filter((element) => element[attribute] === value);
     }
 }
 
@@ -129,76 +143,77 @@ class Server {
 
     sendRequestToDb(requestStr) {
         const requestArr = requestStr.split(/\s|\/|\b/).filter(Boolean);
-        //[requestStr.split(" ").length - 1]
-        console.log('requestArr[1]: ', requestArr[1])
-        console.log('requestArr[2]: ', requestArr[2])
         switch (true) {
             case /^GET\s[A-Za-z]+$/.test(requestStr):
-                console.log("regex for get users");
-                console.log(db.getArrayOf(requestArr[1]));
+                sendServerDataToClient(db.getArrayOf(requestArr[1]));
                 //place 1 in the requestStr is the array name
                 break;
             case /^GET\s[A-Za-z]+\/\d+$/.test(requestStr):
-                console.log("regex for get users/1, get shoppingItem/1");
-                console.log(db.getObjById(requestArr[1], requestArr[2]));
+                sendServerDataToClient(db.getObjById(requestArr[1], requestArr[2]));
                 //place 1 in the requestStr is the array name, place 2 is the specific item id
                 break;
             case /^DELETE\s[A-Za-z]+\/\d+$/.test(requestStr):
-                console.log("regex for DELETE users/0, DELETE shoppingItem/1");
-                console.log(db.deleteObj(requestArr[1], requestArr[2]));
+                sendServerDataToClient(db.deleteObj(requestArr[1], requestArr[2]));
                 //place 1 in the requestStr is the array name, place 2 is the specific item id
                 break;
             case /^GET (\w+\/){2}\w+$/.test(requestStr):
-                console.log("regex for get users/userName/elisheva");
-                console.log(db.getFilterdArrayByAttribure(requestArr[1], requestArr[2], requestArr[3]))
+                sendServerDataToClient(db.getFilterdArrayByAttribure(requestArr[1], requestArr[2], requestArr[3]))
                 //place 1 in the requestStr is the array name, place 2 is the attribute, place 3 is the attribute value
                 break;
             case /^POST(\s[A-Za-z]+){3}$/.test(requestStr):
-                console.log("regex for POST users username elisheva ");
-                console.log(db.addUser(requestArr[2], requestArr[3]))
+                sendServerDataToClient(db.addUser(requestArr[2], requestArr[3]))
                 //place 2 is the username, place 3 is the password
                 break;
             case /^POST(\s[A-Za-z]+){2}$/.test(requestStr):
-                console.log("regex for POST ShoppingItem oil");
-                console.log(db.addShoppingItem(requestArr[2]))
+                sendServerDataToClient(db.addShoppingItem(requestArr[2]))
                 //place 2 in the requestStr is the name 
                 break;
             default:
                 console.log("Request not recognized.");
         }
-
-        // Example usage:
-
-
-        // regex for get users       /^GET\s\/[A-Za-z]/$/
-        // regex for get users/1, get shoppingItem/1      /^GET\s\/[A-Za-z]/\/\d+$/
-        // regex for DELETE users/0, DELETE shoppingItem/1      /^DELETE\s\/[A-Za-z]/\/\d+$/
-        // regex for get users/userName/elisheva         /^GET (\w+\/){2}\w+$/
-        // regex for POST users username elisheva       /^POST(\s[A-Za-z]+){3}$/
     }
-
     //validation unams pass
-    //url to a db function
     //return value to client
 }
 
 let server = new Server();
-server.sendRequestToDb("GET Users");
-server.sendRequestToDb("GET Users/1");
-server.sendRequestToDb("DELETE Users/1");
-server.sendRequestToDb("GET Users/name/elisheva");
 server.sendRequestToDb("POST Users username elisheva");
 server.sendRequestToDb("POST ShoppingItems oil");
 server.sendRequestToDb("POST Users eliaaa aaaaaa");
 server.sendRequestToDb("POST ShoppingItems aaa");
+server.sendRequestToDb("GET Users");
+server.sendRequestToDb("GET Users/0");
+server.sendRequestToDb("DELETE Users/1");
+server.sendRequestToDb("GET Users/username/username");
 
-
-
-
+//Network
 function sendFAJAXToServer(requestStr) {
     setTimeout(Server.sendRequestToDb(requestStr), 30000);
 }
 
-function sendServerDataToClient(dava) {
+function sendServerDataToClient(data) {
+    console.log('data: ', data)
     //setTimeout(Server.translateRequest(requestStr), 30000);
 }
+
+function getCurrUser() {
+    const usersArr = db.getArrayOf("Users");
+    for (const user of usersArr) {
+        if (user.connected === true) {
+            return user;
+        }
+    }
+}
+getCurrUser();
+//  let user = JSON.parse(localStorage.getItem(key));
+
+
+document.getElementById("user-greeting").textContent = `Hello ${getCurrUser().userName}`;
+
+const logOut = () => {
+    let user = getCurrUser();
+    user.connected = false;
+    localStorage.setItem(user.userName, JSON.stringify(user));
+}
+
+document.getElementById("log-out").addEventListener("click", logOut);
