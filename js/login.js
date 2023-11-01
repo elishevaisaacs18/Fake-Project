@@ -31,6 +31,13 @@ class DB {
         return "success";
     }
 
+    deleteItem(objType, id, ) {
+        const ARR = this.getArrayOf(objType);
+        ARR[id] = {};
+        localStorage.setItem(objType, JSON.stringify(ARR));
+        return "success";
+    }
+
     addUser(username, password) {
         let user = new User(username, password);
         this.users.push(user);
@@ -81,6 +88,14 @@ class ShoppingItem {
     }
 }
 
+class Client {
+    constructor() {
+        this.info;
+    }
+}
+
+const client = new Client();
+
 class Server {
     constructor() {
         this.state = 0;
@@ -102,15 +117,10 @@ class Server {
                 //place 1 in the requestStr is the array name, place 2 is the specific item id
                 break;
 
-
-
-            //delete item 
-            // case /^DELETE\s[A-Za-z]+\/\d+$/.test(requestStr):
-            //     sendServerDataToClient(db.deleteObj(requestArr[1], requestArr[2]));
-            //     //place 1 in the requestStr is the array name, place 2 is the specific item id
-            //     break;
-
-
+            case /^DELETE\s[A-Za-z]+\/\d+\/[A-Za-z]+$/.test(requestStr):
+                sendServerDataToClient(db.deleteObj(requestArr[1], requestArr[2]));
+                //place 1 in the requestStr is the array name, place 2 is the specific item id
+                break;
 
             case /^GET (\w+\/){2}\w+$/.test(requestStr):
                 sendServerDataToClient(db.getFilterdArrayByAttribure(requestArr[1], requestArr[2], requestArr[3]))
@@ -141,6 +151,7 @@ server.sendRequestToDb("POST ShoppingItems aaa");
 server.sendRequestToDb("GET Users");
 server.sendRequestToDb("GET Users/0");
 server.sendRequestToDb("DELETE Users/1");
+server.sendRequestToDb("DELETE Users/1/oil");
 server.sendRequestToDb("GET Users/username/username");
 
 class FakeAjax {
@@ -160,6 +171,8 @@ class FakeAjax {
         console.log('sent');
     }
 }
+
+
 
 function addItemPrompt() {
     let item = prompt("Which item would you like to add ?");
@@ -282,8 +295,9 @@ function sendFAJAXToServer(requestStr) {
 }
 
 function sendServerDataToClient(data) {
-    console.log('data: ', data)
-    //setTimeout(, 30000);
+    console.log('data: ', data);
+    client.info = data;
+    console.log('client.info: ', client.info)
 }
 
 function getCurrUser() {
