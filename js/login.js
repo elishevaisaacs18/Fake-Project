@@ -26,25 +26,30 @@ class ShoppingList {
 class ShoppingItem {
     constructor(name) {
         this.name = name;
-        this.deleted = false;
     }
 }
 
 function addItemPrompt() {
     let item = prompt("Which item would you like to add ?");
-    if (item !== "") {
+    if (item !== "" ) {
         let listItem = document.createElement("li");
         listItem.textContent = item;
-        // listItem.id=listItem;
+       
         let parentElement = document.getElementById("ul-list");
         parentElement.appendChild(listItem);
         let icon = document.createElement("img");
         icon.src = "../img/remove-item.png";
-        icon.id = "remove - item";
-        parentElement.appendChild(icon);
-        icon.addEventListener('click', console.log("faja"));
+        // icon.class= "remove - item";
+        icon.id=item;
+        listItem.appendChild(icon);
+       icon.addEventListener("click", removeItem(item))
     }
 
+}
+function removeItem(item){
+    const fajax= new FakeAjax();
+    fajax.open("DELETE", "Users/" + getCurrUser().id + "/" + item);
+    icon.addEventListener('click', sendFAJAXToServer(fajax.send()));
 }
 // function validPassword(password){
 //  let passwordCheck=/^(?=.*[a-z])(?=.*[A-Z]).{8,}$/;

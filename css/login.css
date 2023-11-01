@@ -10,7 +10,7 @@ body{
 nav{
     background-color: #43315c
     ;
-    height:10vh;
+    height:15vh;
 
 }
 h1{
@@ -22,21 +22,20 @@ h1{
     margin:auto;
     margin-top: 100px;
      /* display: flex; */
-     justify-content: center;
+    justify-content: center;
     align-items: center; 
     text-align: center;
     height: 60vh; 
     width:60vw;
-    background-color: #67ad83
-    ;
+    background-color: #67ad83 ;
     border: 10px solid #67ad83;
     border-radius: 45px;
 }
 
 #log-out{
     height:3rem;
-    width:10rem;
-    margin: 15px;
+    width:10rem; 
+    margin: 15px; 
     /* float:left; */
     font-size: 20px;
     /* background-color: #A6D0DD; */
@@ -44,6 +43,7 @@ h1{
     background-color: #ffffff;
     color: #2e2042;
     border-radius: 20px;
+    float:right;
 
 }
 form{
