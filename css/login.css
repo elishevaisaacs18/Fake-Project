@@ -44,6 +44,7 @@ h1{
     background-color: #ffffff;
     color: #2e2042;
     border-radius: 20px;
+    float:right;
 
 }
 form{
@@ -85,6 +86,6 @@ ul{
     margin:20px;
     font-size: 30px;
 }
-#remove-item{
-    
-}
+ .remove-item{
+    margin: 30px;
+ } 
