@@ -284,7 +284,11 @@ const showMistakeMessage = (message, time) => {
 
 function listenToActions() {
     if (currPage === 'log-in-template') {
-        document.getElementById("log-in-btn").addEventListener('click', tryConnection);
+        document.getElementById("log-in-btn").addEventListener('click', (e)=>
+        {
+            e.preventDefault();
+            tryConnection()
+        });
     } else if (currPage === 'shoping-list-template') {
         document.getElementById("log-out").addEventListener("click", logOut);
         document.getElementById("add-item").addEventListener("click", addItemPrompt)
