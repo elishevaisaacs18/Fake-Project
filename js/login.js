@@ -31,10 +31,11 @@ class DB {
         return "success";
     }
 
-    deleteItem(objType, id, name) {
+    deleteItemFromDB(objType, id, name) {
         const usersArr = this.getArrayOf(objType);
-        usersArr[id].shoppingList[shoppingList.indexOf(name)]///remove this
-        localStorage.setItem(objType, JSON.stringify(ARR));
+        const removeItemIndex = usersArr[Number(id)].shoppingList.indexOf(name);
+        usersArr[id].shoppingList.splice(removeItemIndex, 1);
+        localStorage.setItem(objType, JSON.stringify(usersArr));
         return "success";
     }
 
@@ -116,9 +117,9 @@ class Server {
                 sendServerDataToClient(db.deleteObj(requestArr[1], requestArr[2]));
                 //place 1 in the requestStr is the array name, place 2 is the specific item id
                 break;
-//delete item
+            //delete item
             case /^DELETE\s[A-Za-z]+\/\d+\/[A-Za-z]+$/.test(requestStr):
-                sendServerDataToClient(db.deleteItem(requestArr[1], requestArr[2], requestArr[3]));
+                sendServerDataToClient(db.deleteItemFromDB(requestArr[1], requestArr[2], requestArr[3]));
                 //place 1 in the requestStr is the array name, place 2 is the specific item id place 3 is the name of the item to remove
                 break;
 
@@ -144,15 +145,15 @@ class Server {
 
 
 let server = new Server();
-// server.sendRequestToDb("POST Users username elisheva");
-// server.sendRequestToDb("POST ShoppingItems oil");
-// server.sendRequestToDb("POST Users eliaaa aaaaaa");
-// server.sendRequestToDb("POST ShoppingItems aaa");
-// server.sendRequestToDb("GET Users");
-// server.sendRequestToDb("GET Users/0");
-// server.sendRequestToDb("DELETE Users/1");
-// server.sendRequestToDb("DELETE Users/1/oil");
-// server.sendRequestToDb("GET Users/username/username");
+server.sendRequestToDb("POST Users username elisheva");
+server.sendRequestToDb("POST Users eliaaa aaaaaa");
+server.sendRequestToDb("POST ShoppingItems oil");
+server.sendRequestToDb("POST ShoppingItems aaa");
+server.sendRequestToDb("GET Users");
+server.sendRequestToDb("GET Users/0");
+server.sendRequestToDb("DELETE Users/1");
+server.sendRequestToDb("DELETE Users/0/oil");
+server.sendRequestToDb("GET Users/username/username");
 
 class FakeAjax {
     constructor() {
@@ -162,11 +163,9 @@ class FakeAjax {
     open(type, route, body) {
         console.log("open")
         this.responseText = `${type} ${route}${body ? " " + body : ""}`;
-        console.log('this.responseText: ', this.responseText);
     }
     send() {
         server.sendRequestToDb(this.responseText);
-        console.log('this.responseText: ', this.responseText)
         console.log('sent');
     }
 }
@@ -174,26 +173,27 @@ class FakeAjax {
 function addItemPrompt() {
     let item = prompt("Which item would you like to add ?");
     if (item !== "") {
+        const fajax = new FakeAjax();
+        fajax.open("POST", "Users", item);
+        fajax.send();
         let listItem = document.createElement("li");
+        listItem.id = item;
         listItem.textContent = item;
         document.getElementById("ul-list").appendChild(listItem);
         let icon = document.createElement("img");
         icon.src = "../img/remove-item.png";
         icon.class = "remove - item";
         listItem.appendChild(icon);
-        console.log(icon);
-        console.log('sendFAJAXToServer: ', sendFAJAXToServer)
-
         icon.addEventListener("click", () => deleteItem(item));
     }
 }
 
 function deleteItem(item) {
-    console.log("deleted");
-    console.log('route', "DELETE", "Users/" + getCurrUser().id + "/" + item)
     const fajax = new FakeAjax();
     fajax.open("DELETE", "Users/" + getCurrUser().id + "/" + item);
     fajax.send();
+    const parentElement = document.getElementById("ul-list");
+    parentElement.removeChild(document.getElementById(item))
 }
 // function validPassword(password){
 //  let passwordCheck=/^(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
@@ -255,13 +255,11 @@ document.addEventListener('DOMContentLoaded', () => {
 //     setTimeout(deleteMassage, time);
 // }
 
-function checkUserName(){
-    let userExist=document.getElementById("user-name");
+function checkUserName() {
+    let userExist = document.getElementById("user-name");
     const fajax = new FakeAjax();
     fajax.open("GET", "Users");
     fajax.send();
-    console.log("client infooooooooooo", client.info);
-
 }
 
 checkUserName();
@@ -305,18 +303,24 @@ function getCurrUser() {
             return user;
         }
     }
+
+    return JSON.parse(localStorage.getItem('Users'))[0];
 }
-
-getCurrUser();
-//  let user = JSON.parse(localStorage.getItem(key));
-
 
 document.getElementById("user-greeting").textContent = `Hello ${getCurrUser().username}`;
 
-function logOut(){
-    let user = getCurrUser();
-    user.connected = false;
-    localStorage.setItem(user.username, JSON.stringify(user));
+function logOut() {
+    const fajax = new FakeAjax();
+    fajax.open("GET", "Users");
+    fajax.send();
+    const users = client.info;
+    let currUser = getCurrUser();
+    currUser.connected = false;
+    for(const user of users) {
+        if(user.id = currUser.id){
+            user = currUser
+        }
+    }
+    localStorage.setItem('Users', JSON.stringify(users));
     changePage('log-in-template');
-
 }
