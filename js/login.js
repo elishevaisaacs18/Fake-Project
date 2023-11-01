@@ -104,7 +104,7 @@ class Server {
 
 
 
-                //delete item 
+            //delete item 
             // case /^DELETE\s[A-Za-z]+\/\d+$/.test(requestStr):
             //     sendServerDataToClient(db.deleteObj(requestArr[1], requestArr[2]));
             //     //place 1 in the requestStr is the array name, place 2 is the specific item id
@@ -169,12 +169,16 @@ function addItemPrompt() {
         document.getElementById("ul-list").appendChild(listItem);
         let icon = document.createElement("img");
         icon.src = "../img/remove-item.png";
-         icon.class= "remove - item";
+        icon.class = "remove - item";
         listItem.appendChild(icon);
-        icon.addEventListener("click", () => sendFAJAXToServer(item))
+        console.log(icon);
+        console.log('sendFAJAXToServer: ', sendFAJAXToServer)
+
+        icon.addEventListener("click", () => deleteItem(item));
     }
 }
-function sendFAJAXToServer(item) {
+
+function deleteItem(item) {
     console.log("deleted");
     console.log('route', "DELETE", "Users/" + getCurrUser().id + "/" + item)
     const fajax = new FakeAjax();
@@ -196,22 +200,61 @@ function sendFAJAXToServer(item) {
 // let json = JSON.stringify(user);
 // localStorage.setItem(json);
 
+
 let currPage;
 document.addEventListener('DOMContentLoaded', () => {
     changePage('log-in-template');
     listenToActions();
 });
+
+
+// document.getElementById('sign-in-btn').addEventListener('click', accessAccount)
+
+// //! i would like to go throgh this function with you
+// function accessAccount() {
+//     const userNameInput = document.getElementById('uname').value;
+//     const passwordInput = document.getElementById('pass').value;
+//     if (userNameInput === '' || passwordInput === '') {
+//         showMistakeMessage('Please put in the required fields', 3000);
+//     }
+//     else if (localStorage.getItem(userNameInput) === null) {
+//         showMistakeMessage('Your username or password is incorrect or you dont have have an account, creat one down below', 5000);
+//     }
+//     else {
+//         let user = JSON.parse(localStorage.getItem(userNameInput));
+//         console.log(user)
+//         if (user.userName === userNameInput && user.password === passwordInput) {
+//             user.conected = true;
+//             localStorage.setItem(user.userName , JSON.stringify(user));
+//             window.location.assign("gamePage.html");
+//         }
+//         else {
+//         showMistakeMessage('Your username or password is incorrect or you dont have have an account, creat one down below', 5000);
+//         }
+//     }
+// }
+
+// function deleteMassage() {
+//     document.getElementById('mistake-alert').classList.add('hidden');
+// }
+
+// const showMistakeMessage = (message, time) => {
+//     const messageElement = document.getElementById('mistake-alert');
+//     messageElement.textContent = message;
+//     messageElement.classList.remove('hidden');
+//     setTimeout(deleteMassage, time);
+// }
+
+
 function listenToActions() {
     if (currPage === 'log-in-template') {
         document.getElementById("log-in-btn").addEventListener('click', () => {
+            //check if the uname and password are correct
             changePage('shoping-list-template');
         });
     } else if (currPage === 'shoping-list-template') {
-        // document.getElementById("sign-up-btn").addEventListener('click', () => {
-        //     changePage('sign-in-template');
-        // });
-        let addItemIcon = document.getElementById("add-item").addEventListener("click", addItemPrompt)
-
+        document.getElementById("log-out").addEventListener("click", logOut);
+        document.getElementById("add-item").addEventListener("click", addItemPrompt)
     }
 }
 
@@ -226,6 +269,7 @@ function changePage(newPageTemplateId) {
 
 //Network
 function sendFAJAXToServer(requestStr) {
+    console.log('sendFAJAXToServer: ', sendFAJAXToServer)
     setTimeout(server.sendRequestToDb(requestStr), 30000);
 }
 
@@ -248,10 +292,10 @@ getCurrUser();
 
 document.getElementById("user-greeting").textContent = `Hello ${getCurrUser().username}`;
 
-const logOut = () => {
+function logOut(){
     let user = getCurrUser();
     user.connected = false;
     localStorage.setItem(user.username, JSON.stringify(user));
-}
+    changePage('log-in-template');
 
-document.getElementById("log-out").addEventListener("click", logOut);
+}
