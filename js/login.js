@@ -1,6 +1,5 @@
-// const Users = [];
-// const ShoppingItems = [];
-
+localStorage.setItem("ShoppingItems",  JSON.stringify([{item: "milk"}]));
+localStorage.setItem("Users",  JSON.stringify ([{name: "eli", password:"eli"}]));
 
 function login(event) {
     event.preventDefault();
@@ -106,7 +105,6 @@ class DB {
     addUser(username, password) {
         let user = new User(username, password);
         this.users.push(user);
-        console.log('usersssssss', this.users)
         localStorage.setItem("Users", JSON.stringify(this.users));
     }
 
@@ -120,6 +118,8 @@ class DB {
         this.getArrayOf(arr).filter((element) => element[attribute] === value);
     }
 }
+
+const db = new DB();
 
 class Server {
     constructor() {
