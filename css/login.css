@@ -32,7 +32,7 @@ h1{
     border-radius: 45px;
 }
 
-.hide{
+.hidden{
     display:none;
 }
 
@@ -92,3 +92,8 @@ ul{
  .remove-item{
     margin: 30px;
  } 
+
+ #user-greeting{
+    color: rgb(224, 236, 251);
+
+ }

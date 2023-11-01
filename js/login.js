@@ -145,7 +145,7 @@ class Server {
 
 
 let server = new Server();
-server.sendRequestToDb("POST Users username elisheva");
+server.sendRequestToDb("POST Users elisheva isaacs");
 server.sendRequestToDb("POST Users eliaaa aaaaaa");
 server.sendRequestToDb("POST ShoppingItems oil");
 server.sendRequestToDb("POST ShoppingItems aaa");
@@ -234,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
 //         let user = JSON.parse(localStorage.getItem(userNameInput));
 //         console.log(user)
 //         if (user.userName === userNameInput && user.password === passwordInput) {
-//             user.conected = true;
+//             user.connected = true;
 //             localStorage.setItem(user.userName , JSON.stringify(user));
 //             window.location.assign("gamePage.html");
 //         }
@@ -255,23 +255,53 @@ document.addEventListener('DOMContentLoaded', () => {
 //     setTimeout(deleteMassage, time);
 // }
 
-function checkUserName() {
-    let userExist = document.getElementById("user-name");
+function checkIfUserIsValid(userNameInput, passwordInput) {
     const fajax = new FakeAjax();
     fajax.open("GET", "Users");
     fajax.send();
+    const users = client.info;
+    for (const user of users) {
+        if (user.username === userNameInput && user.password === passwordInput) {
+            user.connected = true;
+            localStorage.setItem('Users', JSON.stringify(users));
+            return true;
+        }
+
+    }
+    return false;
 }
 
-checkUserName();
+function deleteMassage() {
+    document.getElementById('mistake-alert').classList.add('hidden');
+}
+
+const showMistakeMessage = (message, time) => {
+    const messageElement = document.getElementById('mistake-alert');
+    messageElement.textContent = message;
+    messageElement.classList.remove('hidden');
+    setTimeout(deleteMassage, time);
+}
+
 function listenToActions() {
     if (currPage === 'log-in-template') {
-        document.getElementById("log-in-btn").addEventListener('click', () => {
-            //check if the uname and password are correct
-            changePage('shoping-list-template');
-        });
+        document.getElementById("log-in-btn").addEventListener('click', tryConnection);
     } else if (currPage === 'shoping-list-template') {
         document.getElementById("log-out").addEventListener("click", logOut);
         document.getElementById("add-item").addEventListener("click", addItemPrompt)
+    }
+}
+
+function tryConnection() {
+    const userNameInput = document.getElementById('user-name').value;
+    const passwordInput = document.getElementById('password').value;
+    if (userNameInput === '' || passwordInput === '') {
+        showMistakeMessage('Please put in the required fields', 3000);
+    } else if (checkIfUserIsValid(userNameInput, passwordInput)) {
+        changePage('shoping-list-template');
+        document.getElementById("user-greeting").classList.remove("hidden");
+        document.getElementById("log-out").classList.remove("hidden");
+    } else {
+        showMistakeMessage('Your username or password is incorrect', 5000);
     }
 }
 
@@ -310,17 +340,20 @@ function getCurrUser() {
 document.getElementById("user-greeting").textContent = `Hello ${getCurrUser().username}`;
 
 function logOut() {
+    document.getElementById("log-out").classList.add("hidden");
+    document.getElementById("user-greeting").classList.add("hidden");
     const fajax = new FakeAjax();
     fajax.open("GET", "Users");
     fajax.send();
     const users = client.info;
     let currUser = getCurrUser();
-    currUser.connected = false;
-    for(const user of users) {
-        if(user.id = currUser.id){
-            user = currUser
+    console.log('currUserrrrrrrrrrrrrrrrrrrrrr: ', currUser)//not the same as the user in the array
+    for (const user of users) {
+        if (user.id === currUser.id) {
+            user.connected = false;
         }
     }
     localStorage.setItem('Users', JSON.stringify(users));
+    console.log('usersssssssssssssssssssssssss: ', users)
     changePage('log-in-template');
 }
