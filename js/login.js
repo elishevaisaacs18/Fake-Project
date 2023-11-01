@@ -54,7 +54,6 @@ class DB {
         user.shoppingList = shoppingArr;
         this.users[getCurrUser().id] = user;
         localStorage.setItem("Users", JSON.stringify(this.users));
-        console.log('getCurrUser().shoppingList): ', getCurrUser().shoppingList)
         return "success";
     }
 
@@ -165,7 +164,7 @@ class FakeAjax {
         this.responseText = `${type} ${route}${body ? " " + body : ""}`;
     }
     send() {
-        server.sendRequestToDb(this.responseText);
+        sendFAJAXToServer(this.responseText);
         console.log('sent');
     }
 }
@@ -195,65 +194,12 @@ function deleteItem(item) {
     const parentElement = document.getElementById("ul-list");
     parentElement.removeChild(document.getElementById(item))
 }
-// function validPassword(password){
-//  let passwordCheck=/^(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-//     if(password.test(passwordCheck)){
-
-//     }
-//     else if(password.length<8){
-//         alert('password hasto be at least 8 characters')
-//     }
-//     else if(){
-
-//     }
-// }
-// let json = JSON.stringify(user);
-// localStorage.setItem(json);
-
 
 let currPage;
 document.addEventListener('DOMContentLoaded', () => {
     changePage('log-in-template');
     listenToActions();
 });
-
-
-//  document.getElementById('sign-in-btn').addEventListener('click', accessAccount)
-
-// //! i would like to go throgh this function with you
-// function accessAccount() {
-//     const userNameInput = document.getElementById('uname').value;
-//     const passwordInput = document.getElementById('pass').value;
-//     if (userNameInput === '' || passwordInput === '') {
-//         showMistakeMessage('Please put in the required fields', 3000);
-//     }
-//     else if (localStorage.getItem(userNameInput) === null) {
-//         showMistakeMessage('Your username or password is incorrect or you dont have have an account, creat one down below', 5000);
-//     }
-//     else {
-//         let user = JSON.parse(localStorage.getItem(userNameInput));
-//         console.log(user)
-//         if (user.userName === userNameInput && user.password === passwordInput) {
-//             user.connected = true;
-//             localStorage.setItem(user.userName , JSON.stringify(user));
-//             window.location.assign("gamePage.html");
-//         }
-//         else {
-//         showMistakeMessage('Your username or password is incorrect or you dont have have an account, creat one down below', 5000);
-//         }
-//     }
-// }
-
-// function deleteMassage() {
-//     document.getElementById('mistake-alert').classList.add('hidden');
-// }
-
-// const showMistakeMessage = (message, time) => {
-//     const messageElement = document.getElementById('mistake-alert');
-//     messageElement.textContent = message;
-//     messageElement.classList.remove('hidden');
-//     setTimeout(deleteMassage, time);
-// }
 
 function checkIfUserIsValid(userNameInput, passwordInput) {
     const fajax = new FakeAjax();
@@ -284,19 +230,20 @@ const showMistakeMessage = (message, time) => {
 
 function listenToActions() {
     if (currPage === 'log-in-template') {
-        document.getElementById("log-in-btn").addEventListener('click', (e)=>
-        {
+        console.log('currPage log in: ', currPage)
+        document.getElementById("log-in-btn").addEventListener('click', (e) => {
             e.preventDefault();
             tryConnection()
         });
     } else if (currPage === 'shoping-list-template') {
+        console.log('currPage shopping: ', currPage)
         document.getElementById("log-out").addEventListener("click", logOut);
         document.getElementById("add-item").addEventListener("click", addItemPrompt)
     }
 }
 
 function tryConnection() {
-    const userNameInput = document.getElementById('user-name').value;
+    const userNameInput = document.getElementById('user-name').value;//going hete twich
     const passwordInput = document.getElementById('password').value;
     if (userNameInput === '' || passwordInput === '') {
         showMistakeMessage('Please put in the required fields', 3000);
@@ -320,14 +267,13 @@ function changePage(newPageTemplateId) {
 
 //Network
 function sendFAJAXToServer(requestStr) {
-    console.log('sendFAJAXToServer: ', sendFAJAXToServer)
-    setTimeout(server.sendRequestToDb(requestStr), 30000);
+    console.log('Send FAJAX To Server: ', requestStr)
+    setTimeout(server.sendRequestToDb(requestStr), 3000);
 }
 
 function sendServerDataToClient(data) {
-    console.log('data: ', data);
     client.info = data;
-    console.log('client.info: ', client.info)
+    console.log('Send Server Data To Client: ', data)
 }
 
 function getCurrUser() {
@@ -351,13 +297,26 @@ function logOut() {
     fajax.send();
     const users = client.info;
     let currUser = getCurrUser();
-    console.log('currUserrrrrrrrrrrrrrrrrrrrrr: ', currUser)//not the same as the user in the array
     for (const user of users) {
         if (user.id === currUser.id) {
             user.connected = false;
         }
     }
     localStorage.setItem('Users', JSON.stringify(users));
-    console.log('usersssssssssssssssssssssssss: ', users)
     changePage('log-in-template');
 }
+
+// function validPassword(password){
+//  let passwordCheck=/^(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+//     if(password.test(passwordCheck)){
+
+//     }
+//     else if(password.length<8){
+//         alert('password hasto be at least 8 characters')
+//     }
+//     else if(){
+
+//     }
+// }
+// let json = JSON.stringify(user);
+// localStorage.setItem(json);
