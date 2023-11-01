@@ -187,6 +187,26 @@ server.sendRequestToDb("GET Users/0");
 server.sendRequestToDb("DELETE Users/1");
 server.sendRequestToDb("GET Users/username/username");
 
+class FakeAjax {
+    constructor() {
+        this.responseText = '';
+
+    }
+    open(type, route, body) {
+        this.responseText = `${type} ${route}${body ? " " + body : ""}`;
+        //type + " " + route + body? +" " + body : "";
+        console.log('this.responseText: ', this.responseText);
+    }
+    send (){
+        server.sendRequestToDb(this.responseText) ;
+        console.log('sent');
+    }
+}
+
+const fajax = new FakeAjax() 
+fajax.open("POST", "Users", "mmmm");
+fajax.send();
+
 //Network
 function sendFAJAXToServer(requestStr) {
     setTimeout(Server.sendRequestToDb(requestStr), 30000);
@@ -194,7 +214,7 @@ function sendFAJAXToServer(requestStr) {
 
 function sendServerDataToClient(data) {
     console.log('data: ', data)
-    //setTimeout(Server.translateRequest(requestStr), 30000);
+    //setTimeout(, 30000);
 }
 
 function getCurrUser() {
@@ -209,12 +229,12 @@ getCurrUser();
 //  let user = JSON.parse(localStorage.getItem(key));
 
 
-document.getElementById("user-greeting").textContent = `Hello ${getCurrUser().userName}`;
+document.getElementById("user-greeting").textContent = `Hello ${getCurrUser().username}`;
 
 const logOut = () => {
     let user = getCurrUser();
     user.connected = false;
-    localStorage.setItem(user.userName, JSON.stringify(user));
+    localStorage.setItem(user.username, JSON.stringify(user));
 }
 
 document.getElementById("log-out").addEventListener("click", logOut);
