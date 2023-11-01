@@ -31,9 +31,9 @@ class DB {
         return "success";
     }
 
-    deleteItem(objType, id, ) {
-        const ARR = this.getArrayOf(objType);
-        ARR[id] = {};
+    deleteItem(objType, id, name) {
+        const usersArr = this.getArrayOf(objType);
+        usersArr[id].shoppingList[shoppingList.indexOf(name)]///remove this
         localStorage.setItem(objType, JSON.stringify(ARR));
         return "success";
     }
@@ -116,10 +116,10 @@ class Server {
                 sendServerDataToClient(db.deleteObj(requestArr[1], requestArr[2]));
                 //place 1 in the requestStr is the array name, place 2 is the specific item id
                 break;
-
+//delete item
             case /^DELETE\s[A-Za-z]+\/\d+\/[A-Za-z]+$/.test(requestStr):
-                sendServerDataToClient(db.deleteObj(requestArr[1], requestArr[2]));
-                //place 1 in the requestStr is the array name, place 2 is the specific item id
+                sendServerDataToClient(db.deleteItem(requestArr[1], requestArr[2], requestArr[3]));
+                //place 1 in the requestStr is the array name, place 2 is the specific item id place 3 is the name of the item to remove
                 break;
 
             case /^GET (\w+\/){2}\w+$/.test(requestStr):
@@ -144,15 +144,15 @@ class Server {
 
 
 let server = new Server();
-server.sendRequestToDb("POST Users username elisheva");
-server.sendRequestToDb("POST ShoppingItems oil");
-server.sendRequestToDb("POST Users eliaaa aaaaaa");
-server.sendRequestToDb("POST ShoppingItems aaa");
-server.sendRequestToDb("GET Users");
-server.sendRequestToDb("GET Users/0");
-server.sendRequestToDb("DELETE Users/1");
-server.sendRequestToDb("DELETE Users/1/oil");
-server.sendRequestToDb("GET Users/username/username");
+// server.sendRequestToDb("POST Users username elisheva");
+// server.sendRequestToDb("POST ShoppingItems oil");
+// server.sendRequestToDb("POST Users eliaaa aaaaaa");
+// server.sendRequestToDb("POST ShoppingItems aaa");
+// server.sendRequestToDb("GET Users");
+// server.sendRequestToDb("GET Users/0");
+// server.sendRequestToDb("DELETE Users/1");
+// server.sendRequestToDb("DELETE Users/1/oil");
+// server.sendRequestToDb("GET Users/username/username");
 
 class FakeAjax {
     constructor() {
@@ -162,7 +162,6 @@ class FakeAjax {
     open(type, route, body) {
         console.log("open")
         this.responseText = `${type} ${route}${body ? " " + body : ""}`;
-        //type + " " + route + body? +" " + body : "";
         console.log('this.responseText: ', this.responseText);
     }
     send() {
@@ -171,8 +170,6 @@ class FakeAjax {
         console.log('sent');
     }
 }
-
-
 
 function addItemPrompt() {
     let item = prompt("Which item would you like to add ?");
@@ -263,9 +260,10 @@ function checkUserName(){
     const fajax = new FakeAjax();
     fajax.open("GET", "Users");
     fajax.send();
-    console.log("shuihxusaxtrscydfvbggfcnuhhhhmff",fajax.responseText);
+    console.log("client infooooooooooo", client.info);
 
 }
+
 checkUserName();
 function listenToActions() {
     if (currPage === 'log-in-template') {
@@ -308,6 +306,7 @@ function getCurrUser() {
         }
     }
 }
+
 getCurrUser();
 //  let user = JSON.parse(localStorage.getItem(key));
 
