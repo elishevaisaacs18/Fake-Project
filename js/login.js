@@ -21,8 +21,19 @@ class ShoppingItem {
         this.id = DB.getArrayOf("Shopping Items").length;
         this.deleted = false;
     }
-}
+} 
+// function validPassword(password){
+//  let passwordCheck=/^(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+//     if(password.test(passwordCheck)){
 
+//     }
+//     else if(password.length<8){
+//         alert('password hasto be at least 8 characters')
+//     }
+//     else if(){
+
+//     }
+// }
 // let json = JSON.stringify(user);
 // localStorage.setItem(json);
 
