@@ -1,5 +1,5 @@
-const Users = [];
-const ShoppingItems = [];
+
+
 
 function login(event) {
     event.preventDefault();
@@ -119,6 +119,8 @@ class DB {
         this.getArrayOf(arr).filter((element) => element[attribute] === value);
     }
 }
+
+const db = new DB();
 
 class Server {
     constructor() {
