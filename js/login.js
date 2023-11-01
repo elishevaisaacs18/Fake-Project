@@ -1,5 +1,6 @@
-const Users = [];
-const ShoppingItems = [];
+// const Users = [];
+// const ShoppingItems = [];
+
 
 function login(event) {
     event.preventDefault();
@@ -180,6 +181,7 @@ class Server {
     //return value to client
 }
 
+
 let server = new Server();
 server.sendRequestToDb("GET Users");
 server.sendRequestToDb("GET Users/1");
@@ -189,9 +191,6 @@ server.sendRequestToDb("POST Users username elisheva");
 server.sendRequestToDb("POST ShoppingItems oil");
 server.sendRequestToDb("POST Users eliaaa aaaaaa");
 server.sendRequestToDb("POST ShoppingItems aaa");
-
-
-
 
 function sendFAJAXToServer(requestStr) {
     setTimeout(Server.sendRequestToDb(requestStr), 30000);
