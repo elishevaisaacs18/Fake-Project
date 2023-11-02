@@ -175,18 +175,20 @@ function addItemPrompt() {
         const fajax = new FakeAjax();
         fajax.open("POST", "Users", item);
         fajax.send();
-        let listItem = document.createElement("li");
-        listItem.id = item;
-        listItem.textContent = item;
-        document.getElementById("ul-list").appendChild(listItem);
-        let icon = document.createElement("img");
-        icon.src = "../img/remove-item.png";
-        icon.class = "remove - item";
-        listItem.appendChild(icon);
-        icon.addEventListener("click", () => deleteItem(item));
+        addItemToList(item);
     }
 }
-
+function addItemToList(item) {
+    let listItem = document.createElement("li");
+    listItem.id = item;
+    listItem.textContent = item;
+    document.getElementById("ul-list").appendChild(listItem);
+    let icon = document.createElement("img");
+    icon.src = "../img/remove-item.png";
+    icon.class = "remove - item";
+    listItem.appendChild(icon);
+    icon.addEventListener("click", () => deleteItem(item));
+}
 function deleteItem(item) {
     const fajax = new FakeAjax();
     fajax.open("DELETE", "Users/" + getCurrUser().id + "/" + item);
@@ -233,7 +235,13 @@ function listenToActions() {
         console.log('currPage log in: ', currPage)
         document.getElementById("log-in-btn").addEventListener('click', (e) => {
             e.preventDefault();
-            tryConnection()
+            tryConnection();
+            const user = getCurrUser();
+            // user.shoppingList;
+            for(const item of user.shoppingList ){
+                addItemToList(item.name);
+            }
+            //client.info
         });
     } else if (currPage === 'shoping-list-template') {
         console.log('currPage shopping: ', currPage)
