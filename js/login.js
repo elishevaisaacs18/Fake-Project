@@ -197,8 +197,8 @@ function deleteItem(item) {
 
 let currPage;
 document.addEventListener('DOMContentLoaded', () => {
+    console.log("DOM CONTENT LOADED");
     changePage('log-in-template');
-    listenToActions();
 });
 
 function checkIfUserIsValid(userNameInput, passwordInput) {
